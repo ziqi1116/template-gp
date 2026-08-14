@@ -10,3 +10,16 @@ spring:
     password: redis
     database: 0
     timeout: 10s
+
+# AI 智能助手（OpenAI 兼容接口，DeepSeek/通义千问/Kimi/OpenAI 均可）
+# 保持 mock: true 可离线演示（答辩现场不怕断网）；填好 api-key 后改为 false 即为真实 AI
+gp:
+  ai:
+    mock: false
+    base-url: https://dashscope.aliyuncs.com/compatible-mode
+    api-key: 'sk-ws-H.EEPEHYP.x3KT.MEUCIH4250Omoo1-G--3R3Xh0z_T7l0IMyM4QAdvAFTP2IuPAiEAijnraiJfJqRiSserkcQcewzSIKw_w2jWLYiToLO3ufQ'
+    model: qwen-plus
+    temperature: 0.7
+    timeout-millis: 60000
+    max-history: 20
+    system-prompt: '你是 GP 智能助手，一个友好、专业的中文 AI 助手。回答保持简洁、准确、条理清晰。'

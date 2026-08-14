@@ -17,12 +17,15 @@
 ### 2. 数据库初始化
 
 ```bash
-# 登录 MySQL，执行两个 SQL 脚本
+# 登录 MySQL，按顺序执行五个 SQL 脚本
 mysql -u root -p
 
 # 在 MySQL 中执行：
 source gp-admin/sql/gp_framework.sql   # 创建数据库 + 系统表 + 初始数据
-source gp-admin/sql/gp_business.sql     # 业务表 + 示例数据
+source gp-admin/sql/gp_business.sql    # 业务表 + 示例数据
+source gp-admin/sql/gp_extend.sql      # 字典/日志/监控菜单（幂等，可重复执行）
+source gp-admin/sql/gp_ai.sql          # AI 智能助手模块（幂等，可重复执行）
+source gp-admin/sql/gp_dashboard.sql   # 数据大屏菜单（幂等，可重复执行）
 ```
 
 或用 Navicat / DataGrip 直接打开 SQL 文件执行。
@@ -52,7 +55,7 @@ spring:
 
 用 IDEA 打开 `gp-admin` 目录（或 pom.xml），等待 Maven 下载依赖，然后运行 `GpApplication.java`。
 
-启动成功后访问接口文档：http://localhost:8080/doc.html
+启动成功后访问接口文档：http://localhost:8081/doc.html
 
 ### 6. 启动前端
 
@@ -99,14 +102,19 @@ template/
 │   │   │   ├── service/              #   Login/Token/Menu Service
 │   │   │   └── controller/           #   Login/User Controller
 │   │   └── business/                 # ★ 业务模块（可插拔）
-│   │       └── student/              #   示例：学生管理
+│   │       ├── student/              #   示例：学生管理
+│   │       ├── ai/                   #   示例：AI 智能助手（SSE 流式对话）
+│   │       └── dashboard/            #   示例：数据大屏统计接口
 │   ├── src/main/resources/
 │   │   ├── application.yml           # 主配置
-│   │   ├── application-dev.yml       # 开发环境配置
+│   │   ├── application-dev.yml       # 开发环境配置（含 gp.ai 大模型配置）
 │   │   └── mapper/                   # MyBatis XML
 │   └── sql/                          # SQL脚本
 │       ├── gp_framework.sql          # 系统表+初始数据
-│       └── gp_business.sql           # 业务表+示例数据
+│       ├── gp_business.sql           # 业务表+示例数据
+│       ├── gp_extend.sql             # 扩展菜单（幂等）
+│       ├── gp_ai.sql                 # AI 模块表+菜单（幂等）
+│       └── gp_dashboard.sql          # 数据大屏菜单（幂等）
 │
 ├── gp-ui/                       # 前端 (Vue3)
 │   ├── package.json
@@ -118,13 +126,20 @@ template/
 │       │   ├── layout/               #   主布局
 │       │   ├── dashboard/            #   首页
 │       │   ├── system/user/          #   用户管理
-│       │   └── business/student/     #   学生管理
+│       │   ├── business/student/     #   学生管理
+│       │   ├── business/ai/chat/     #   AI 智能对话
+│       │   └── dashboard/screen/     #   数据大屏（ECharts）
 │       ├── store/                    # Pinia状态管理
 │       ├── router/                   # 路由+权限守卫
 │       ├── utils/                    # Axios封装/Token工具
 │       └── directive/                # v-hasPermi权限指令
 │
-└── 毕业设计开发框架-架构设计文档.md    # 完整架构设计文档
+└── docs/                        # 配套文档（与代码分离）
+    ├── 毕业设计开发框架-架构设计文档.md   # 完整架构设计文档
+    ├── AI模块说明.md                     # AI 助手使用与答辩讲解
+    ├── 答辩求生包.md                     # 高频问答 / 演示脚本 / 临场技巧
+    ├── 答辩PPT模板.pptx                  # 答辩 PPT 骨架（含讲稿备注）
+    └── 本科毕业论文-通用模板.md           # 填空式论文写作模板
 ```
 
 ---
@@ -138,11 +153,13 @@ template/
 | 动态路由 | 前端根据后端菜单 API 自动生成路由 |
 | 用户管理 | 完整 CRUD + 状态切换 |
 | 学生管理 | 完整 CRUD + 搜索 + 分页（业务模块示例） |
+| AI 智能助手 | 对接大模型 API，多会话管理、SSE 流式打字机输出、系统数据智能分析，支持演示模式（详见 [AI模块说明](../docs/AI模块说明.md)） |
+| 数据大屏 | ECharts 可视化大屏：登录/注册趋势、角色/班级/性别分布、操作类型统计，数据实时汇总 |
 | 统一返回 | 所有接口返回 `Result<T>` |
 | 全局异常 | `GlobalExceptionHandler` 统一处理 |
 | 逻辑删除 | MyBatis Plus `@TableLogic` |
 | 自动填充 | 创建时间/更新时间/创建人/更新人 |
-| 接口文档 | Knife4j (Swagger) http://localhost:8080/doc.html |
+| 接口文档 | Knife4j (Swagger) http://localhost:8081/doc.html |
 
 ---
 
@@ -155,6 +172,19 @@ template/
 3. **前端**：复制 `src/views/business/student/` → 重命名为 `teacher/` → 修改字段
 4. **菜单**：在 `sys_menu` 表插入教师管理的菜单和权限记录
 5. 完成！无需修改框架代码
+
+---
+
+## 配套文档
+
+| 文档 | 用途 |
+|------|------|
+| [../docs/毕业设计开发框架-架构设计文档.md](../docs/毕业设计开发框架-架构设计文档.md) | 完整架构设计与开发规范 |
+| [../docs/AI模块说明.md](../docs/AI模块说明.md) | AI 助手配置、调用链路与答辩讲解要点 |
+| [../docs/答辩求生包.md](../docs/答辩求生包.md) | 38 个高频问答、5 分钟演示脚本、临场技巧 |
+| [../docs/答辩PPT模板.pptx](../docs/答辩PPT模板.pptx) | 12 页答辩 PPT 骨架，占位符与论文模板一致，每页备注含讲稿 |
+| [../docs/本科毕业论文-通用模板.docx](../docs/本科毕业论文-通用模板.docx) | **Word 版论文模板**：封面/摘要/自动目录/七章骨架，占位符红色高亮，说明文字灰色（提交前删除） |
+| [../docs/本科毕业论文-通用模板.md](../docs/本科毕业论文-通用模板.md) | 论文模板完整教学版（含写作思路与示例段落，与 Word 版配套） |
 
 ---
 
@@ -174,3 +204,6 @@ A: 检查后端 `/getRouters` 接口是否正常返回菜单数据。
 
 **Q: 如何修改 JWT 密钥？**
 A: 修改 `application.yml` 中的 `gp.jwt.secret`。
+
+**Q: AI 对话一直显示「演示模式」？**
+A: 这是正常设计：未配置 Key 时自动进入演示模式，方便离线体验。想用真实 AI，在 `application-dev.yml` 的 `gp.ai` 中填入 `api-key` 并把 `mock` 改为 `false`，重启即可（DeepSeek / 通义千问 / Kimi / OpenAI 均可，详见 [../docs/AI模块说明.md](../docs/AI模块说明.md)）。

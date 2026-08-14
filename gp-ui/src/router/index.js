@@ -60,6 +60,9 @@ router.beforeEach(async (to, from, next) => {
     }
   } else {
     if (whiteList.includes(to.path)) {
+      if (to.path === '/login') {
+        routeLoaded = false
+      }
       next()
     } else {
       next('/login')

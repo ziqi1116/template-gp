@@ -115,21 +115,37 @@ public class SysLoginController {
 
     @Operation(summary = "登录")
     @PostMapping("/login")
-    public Result<Map<String, Object>> login(@RequestBody Map<String, String> body) {
+    public Result<Map<String, Object>> login(@RequestBody Map<String, String> body, HttpServletRequest request) {
         String username = body.get("username");
         String password = body.get("password");
-        String token = loginService.login(username, password);
 
-        SysLogininfor logininfor = new SysLogininfor();
-        logininfor.setUserName(username);
-        logininfor.setStatus("0");
-        logininfor.setMsg("登录成功");
-        logininfor.setLoginTime(new Date());
-        logininforService.save(logininfor);
+        String token;
+        try {
+            token = loginService.login(username, password);
+        } catch (BusinessException e) {
+            // 登录失败也记入登录日志（status=1），供登录日志页与 AI 数据分析统计
+            recordLogininfor(username, "1", e.getMessage(), request);
+            throw e;
+        }
+        recordLogininfor(username, "0", "登录成功", request);
 
         Map<String, Object> result = new HashMap<>();
         result.put("token", token);
         return Result.success(result);
+    }
+
+    /** 记录登录日志，日志写入失败不影响登录主流程 */
+    private void recordLogininfor(String username, String status, String msg, HttpServletRequest request) {
+        try {
+            SysLogininfor logininfor = new SysLogininfor();
+            logininfor.setUserName(username);
+            logininfor.setIpaddr(request.getRemoteAddr());
+            logininfor.setStatus(status);
+            logininfor.setMsg(msg);
+            logininfor.setLoginTime(new Date());
+            logininforService.save(logininfor);
+        } catch (Exception ignored) {
+        }
     }
 
     @Operation(summary = "登出")

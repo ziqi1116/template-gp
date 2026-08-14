@@ -44,6 +44,7 @@ public class SecurityConfig {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests()
                 .antMatchers("/login").permitAll()
+                .antMatchers("/logout").permitAll()
                 .antMatchers("/register").permitAll()
                 .antMatchers("/captcha/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()

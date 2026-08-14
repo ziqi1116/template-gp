@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.gp.business.student.domain.Student;
 import com.gp.business.student.service.StudentService;
+import com.gp.common.annotation.Log;
 import com.gp.common.core.page.PageQuery;
 import com.gp.common.core.page.PageResult;
 import com.gp.common.core.result.Result;
@@ -40,6 +41,7 @@ public class StudentController {
     }
 
     @Operation(summary = "新增学生")
+    @Log(title = "学生管理", operType = "1")
     @PostMapping
     public Result<Void> add(@RequestBody Student student) {
         studentService.save(student);
@@ -47,6 +49,7 @@ public class StudentController {
     }
 
     @Operation(summary = "修改学生")
+    @Log(title = "学生管理", operType = "2")
     @PutMapping
     public Result<Void> edit(@RequestBody Student student) {
         studentService.updateById(student);
@@ -54,6 +57,7 @@ public class StudentController {
     }
 
     @Operation(summary = "删除学生")
+    @Log(title = "学生管理", operType = "3")
     @DeleteMapping("/{ids}")
     public Result<Void> remove(@PathVariable List<Long> ids) {
         studentService.removeByIds(ids);
@@ -61,6 +65,7 @@ public class StudentController {
     }
 
     @Operation(summary = "修改状态")
+    @Log(title = "学生管理", operType = "2")
     @PutMapping("/status")
     public Result<Void> changeStatus(@RequestBody Student student) {
         Student update = new Student();

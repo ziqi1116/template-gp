@@ -1,48 +1,27 @@
 <template>
   <div class="login-container">
-    <!-- 背景动效粒子 -->
-    <div class="bg-particles">
-      <span v-for="i in 15" :key="i" class="particle" :style="particleStyle(i)"></span>
-    </div>
+    <!-- 动态渐变背景 -->
+    <div class="wall-bg"></div>
+    <div class="wall-grid"></div>
 
-    <!-- 左侧品牌区 -->
-    <div class="login-left">
-      <div class="brand-content">
+    <!-- 浮动粒子 -->
+    <span v-for="i in 20" :key="'p'+i" class="float-particle" :style="particleStyle(i)"></span>
+
+    <!-- 旋转光圈 -->
+    <div class="glow-ring ring-1"></div>
+    <div class="glow-ring ring-2"></div>
+
+    <!-- 居中登录卡片 -->
+    <div class="login-wrapper">
+      <!-- 顶部品牌 -->
+      <div class="brand-header">
         <div class="brand-logo">
-          <el-icon :size="48"><Platform /></el-icon>
+          <el-icon :size="42"><Platform /></el-icon>
         </div>
         <h1 class="brand-title">GP-Framework</h1>
         <p class="brand-subtitle">毕业设计统一开发框架</p>
-        <div class="brand-features">
-          <div class="feature-item">
-            <el-icon :size="20"><Setting /></el-icon>
-            <span>RBAC 权限管理</span>
-          </div>
-          <div class="feature-item">
-            <el-icon :size="20"><Menu /></el-icon>
-            <span>动态路由菜单</span>
-          </div>
-          <div class="feature-item">
-            <el-icon :size="20"><Monitor /></el-icon>
-            <span>系统监控日志</span>
-          </div>
-          <div class="feature-item">
-            <el-icon :size="20"><Promotion /></el-icon>
-            <span>前后端分离架构</span>
-          </div>
-        </div>
-        <div class="tech-stack">
-          <span class="tech-tag">Spring Boot</span>
-          <span class="tech-tag">Vue 3</span>
-          <span class="tech-tag">Element Plus</span>
-          <span class="tech-tag">MyBatis-Plus</span>
-          <span class="tech-tag">Redis</span>
-        </div>
       </div>
-    </div>
 
-    <!-- 右侧登录表单区 -->
-    <div class="login-right">
       <div class="login-card">
         <!-- Tab切换 -->
         <div class="form-tabs">
@@ -181,12 +160,13 @@
 
         <div class="login-tip" v-if="activeTab === 'login'">
           <el-icon><InfoFilled /></el-icon>
-          <span>默认账号: <b>admin</b> &nbsp;|&nbsp; 密码: <b>admin123</b></span>
+          <span>默认账号：<b>admin</b> &nbsp; 密码：<b>admin123</b></span>
         </div>
       </div>
-      <div class="copyright">
-        Copyright &copy; {{ new Date().getFullYear() }} GP-Framework · 毕业设计开发框架
-      </div>
+    </div>
+
+    <div class="copyright">
+      Copyright &copy; {{ new Date().getFullYear() }} GP-Framework · 毕业设计开发框架
     </div>
   </div>
 </template>
@@ -196,7 +176,7 @@ import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import {
-  User, Lock, Platform, Setting, Menu, Monitor, Promotion, InfoFilled,
+  User, Lock, Platform, InfoFilled,
   UserFilled, Key
 } from '@element-plus/icons-vue'
 import useUserStore from '@/store/modules/user'
@@ -297,165 +277,151 @@ onMounted(() => {
 
 /* -------- 背景粒子 -------- */
 function particleStyle(i) {
-  const size = 4 + Math.random() * 12
-  const left = Math.random() * 100
-  const top = Math.random() * 100
-  const duration = 10 + Math.random() * 20
-  const delay = Math.random() * 10
+  const size = 3 + Math.random() * 6
   return {
+    left: Math.random() * 100 + '%',
+    top: Math.random() * 100 + '%',
     width: size + 'px',
     height: size + 'px',
-    left: left + '%',
-    top: top + '%',
-    animationDuration: duration + 's',
-    animationDelay: delay + 's'
+    animationDuration: (Math.random() * 10 + 15) + 's',
+    animationDelay: (Math.random() * 10) + 's'
   }
 }
 </script>
 
 <style scoped lang="scss">
 .login-container {
-  display: flex;
+  position: relative;
   height: 100vh;
   overflow: hidden;
-  position: relative;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-}
-
-/* 背景粒子动画 */
-.bg-particles {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 0;
-
-  .particle {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(64, 158, 255, 0.15);
-    animation: floatUp linear infinite;
-  }
-}
-
-@keyframes floatUp {
-  0% { transform: translateY(0) scale(1); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateY(-100vh) scale(0); opacity: 0; }
-}
-
-/* 左侧品牌区 */
-.login-left {
-  flex: 1;
+  background: #0f172a;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  z-index: 1;
-  background-image: url('https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20abstract%20technology%20background%20with%20blue%20gradient%20geometric%20shapes%20network%20connections%20clean%20minimal%20dark%20theme&image_size=landscape_16_9');
-  background-size: cover;
-  background-position: center;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(15, 52, 96, 0.85) 0%, rgba(22, 33, 62, 0.9) 100%);
-  }
 }
 
-.brand-content {
-  position: relative;
+/* 动态渐变背景 */
+.wall-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(-45deg, #667eea, #764ba2, #6B8DD6, #8E37D7);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  z-index: 0;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.wall-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at center, black 30%, transparent 70%);
+  -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 70%);
   z-index: 1;
+}
+
+/* 旋转光圈 */
+.glow-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.ring-1 {
+  width: 600px; height: 600px;
+  top: -200px; right: -150px;
+  animation: ringRotate 40s linear infinite;
+}
+.ring-2 {
+  width: 400px; height: 400px;
+  bottom: -120px; left: -80px;
+  animation: ringRotate 60s linear infinite reverse;
+}
+
+@keyframes ringRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* 浮动粒子 */
+.float-particle {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  z-index: 2;
+  animation: float linear infinite;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); opacity: 0.4; }
+  25%      { transform: translate(20px, -30px); opacity: 0.8; }
+  50%      { transform: translate(-15px, -60px); opacity: 0.6; }
+  75%      { transform: translate(25px, -90px); opacity: 0.3; }
+}
+
+/* 居中内容 */
+.login-wrapper {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 品牌头部 */
+.brand-header {
   text-align: center;
+  margin-bottom: 32px;
   color: #fff;
-  max-width: 480px;
-  padding: 0 40px;
 }
 
 .brand-logo {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   color: #409EFF;
-  filter: drop-shadow(0 0 20px rgba(64, 158, 255, 0.5));
+  filter: drop-shadow(0 0 16px rgba(64, 158, 255, 0.6));
 }
 
 .brand-title {
-  font-size: 42px;
+  font-size: 36px;
   font-weight: 700;
   letter-spacing: 2px;
-  margin: 0 0 10px 0;
-  background: linear-gradient(135deg, #409EFF 0%, #67C23A 100%);
+  margin: 0 0 6px 0;
+  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .brand-subtitle {
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0 0 40px 0;
-  letter-spacing: 4px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  letter-spacing: 3px;
 }
 
-.brand-features {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 40px;
-
-  .feature-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    justify-content: center;
-    font-size: 15px;
-    color: rgba(255, 255, 255, 0.8);
-
-    .el-icon { color: #409EFF; }
-  }
-}
-
-.tech-stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-
-  .tech-tag {
-    padding: 4px 14px;
-    border: 1px solid rgba(64, 158, 255, 0.3);
-    border-radius: 20px;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.6);
-    background: rgba(64, 158, 255, 0.08);
-  }
-}
-
-/* 右侧登录区 */
-.login-right {
-  width: 520px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  z-index: 1;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
-}
-
+/* 登录卡片 */
 .login-card {
   width: 400px;
   padding: 36px 40px 30px 40px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
   backdrop-filter: blur(20px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
 }
 
 /* Tabs */
@@ -533,7 +499,6 @@ function particleStyle(i) {
 
 :deep(.el-input__inner) {
   color: #fff;
-
   &::placeholder { color: rgba(255, 255, 255, 0.35); }
 }
 
@@ -566,7 +531,6 @@ function particleStyle(i) {
     color: rgba(255, 255, 255, 0.6);
     font-size: 13px;
   }
-
   :deep(.el-checkbox__inner) {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.2);
@@ -612,19 +576,17 @@ function particleStyle(i) {
 .copyright {
   position: absolute;
   bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  z-index: 10;
 }
 
 /* 响应式 */
-@media (max-width: 1024px) {
-  .login-left { display: none; }
-  .login-right {
-    width: 100%;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  }
-}
 @media (max-width: 480px) {
-  .login-card { width: 90%; padding: 30px 20px; }
+  .login-card { width: 90%; padding: 28px 24px 24px; }
+  .brand-title { font-size: 28px; }
 }
 </style>

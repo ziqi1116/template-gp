@@ -93,7 +93,14 @@ const ICON_MAP = {
   unlock: 'Unlock',
   lock: 'Lock',
   login: 'Right',
-  logout: 'SwitchButton'
+  logout: 'SwitchButton',
+  ai: 'ChatDotRound',
+  chatdotround: 'ChatDotRound',
+  chatlineround: 'ChatLineRound',
+  chat: 'ChatDotRound',
+  dataline: 'DataLine',
+  magicstick: 'MagicStick',
+  gen: 'MagicStick'
 }
 
 const DEFAULT_ICON = 'Menu'

@@ -119,8 +119,8 @@ INSERT INTO sys_role VALUES (1, '超级管理员', 'admin', 1, '0', '0', '超级
 INSERT INTO sys_role VALUES (2, '普通角色', 'common', 2, '0', '0', '普通角色', 'admin', NOW(), '', NULL);
 
 -- 用户 (密码: admin123 -> BCrypt加密)
-INSERT INTO sys_user VALUES (1, 100, 'admin', '管理员', 'admin@gp.com', '13888888888', '0', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu.', '0', 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20male%20admin%20avatar%20portrait%20clean%20blue%20background%20minimal%20style&image_size=square_hd', '127.0.0.1', NOW(), '0', '管理员', 'admin', NOW(), '', NULL);
-INSERT INTO sys_user VALUES (2, 100, 'gp', '测试用户', 'gp@gp.com', '13999999999', '1', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu.', '0', 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20female%20developer%20avatar%20portrait%20clean%20green%20background%20minimal%20style&image_size=square_hd', '127.0.0.1', NOW(), '0', '测试用户', 'admin', NOW(), '', NULL);
+INSERT INTO sys_user VALUES (1, 100, 'admin', '管理员', 'admin@gp.com', '13888888888', '0', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu.', '0', '/avatars/admin.jpg', '127.0.0.1', NOW(), '0', '管理员', 'admin', NOW(), '', NULL);
+INSERT INTO sys_user VALUES (2, 100, 'gp', '测试用户', 'gp@gp.com', '13999999999', '1', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu.', '0', '/avatars/gp.jpg', '127.0.0.1', NOW(), '0', '测试用户', 'admin', NOW(), '', NULL);
 
 -- 用户-角色关联
 INSERT INTO sys_user_role VALUES (1, 1);

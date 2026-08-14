@@ -57,7 +57,7 @@
 <script setup>
 import { ref, computed, getCurrentInstance } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { UserFilled, CaretBottom, SwitchButton, Lock } from '@element-plus/icons-vue'
 import useUserStore from '@/store/modules/user'
 import { updateUserPwd } from '@/api/system/user'
@@ -70,7 +70,8 @@ const ICON_MAP = {
   'tree-table': 'Menu', menu: 'Menu', dict: 'Collection', list: 'List',
   monitor: 'Monitor', log: 'Document', document: 'Document',
   education: 'Reading', business: 'OfficeBuilding', reading: 'Reading',
-  officebuilding: 'OfficeBuilding', collection: 'Collection'
+  officebuilding: 'OfficeBuilding', collection: 'Collection',
+  ai: 'ChatDotRound', chat: 'ChatLineRound'
 }
 
 const route = useRoute()
@@ -101,9 +102,14 @@ function handleCommand(cmd) {
 }
 
 function handleLogout() {
-  userStore.logout().then(() => {
+  ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    userStore.resetState()
     router.push('/login')
-  })
+  }).catch(() => {})
 }
 
 /* -------- 修改密码 -------- */
