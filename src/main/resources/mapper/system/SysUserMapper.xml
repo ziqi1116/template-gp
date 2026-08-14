@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gp.system.mapper.SysUserMapper">
+
+    <resultMap id="SysUserResult" type="com.gp.system.domain.SysUser">
+        <id     property="id"        column="id"/>
+        <result property="deptId"    column="dept_id"/>
+        <result property="userName"  column="user_name"/>
+        <result property="nickName"  column="nick_name"/>
+        <result property="email"     column="email"/>
+        <result property="phone"     column="phone"/>
+        <result property="sex"       column="sex"/>
+        <result property="password"  column="password"/>
+        <result property="status"    column="status"/>
+        <result property="avatar"    column="avatar"/>
+        <result property="loginIp"   column="login_ip"/>
+        <result property="loginDate" column="login_date"/>
+        <result property="delFlag"   column="del_flag"/>
+        <result property="remark"    column="remark"/>
+        <result property="createBy"  column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy"  column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectUserVo">
+        SELECT id, dept_id, user_name, nick_name, email, phone, sex, password,
+               status, avatar, login_ip, login_date, del_flag, remark,
+               create_by, create_time, update_by, update_time
+        FROM sys_user WHERE del_flag = '0'
+    </sql>
+
+    <select id="selectUserByUserName" resultMap="SysUserResult">
+        <include refid="selectUserVo"/> AND user_name = #{userName}
+    </select>
+
+    <select id="selectUserList" resultMap="SysUserResult">
+        <include refid="selectUserVo"/>
+        <if test="user != null">
+            <if test="user.userName != null and user.userName != ''">
+                AND user_name LIKE CONCAT('%', #{user.userName}, '%')
+            </if>
+            <if test="user.phone != null and user.phone != ''">
+                AND phone LIKE CONCAT('%', #{user.phone}, '%')
+            </if>
+            <if test="user.status != null and user.status != ''">
+                AND status = #{user.status}
+            </if>
+        </if>
+        ORDER BY id
+    </select>
+
+    <insert id="insertUserRole">
+        INSERT INTO sys_user_role(user_id, role_id) VALUES
+        <foreach collection="roleIds" item="roleId" separator=",">
+            (#{userId}, #{roleId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteUserRoleByUserId">
+        DELETE FROM sys_user_role WHERE user_id = #{userId}
+    </delete>
+</mapper>
